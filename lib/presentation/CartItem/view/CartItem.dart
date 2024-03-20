@@ -7,7 +7,12 @@ class Product {
   final double price;
   final String image;
 
-  Product({required this.id, required this.title, required this.price, required this.image});
+  Product({
+    required this.id,
+    required this.title,
+    required this.price,
+    required this.image,
+  });
 }
 
 class CartItem {
@@ -15,17 +20,19 @@ class CartItem {
   int quantity;
 
   CartItem({required this.product, this.quantity = 1});
+
+  get id => null;
 }
 
 class CartModel extends ChangeNotifier {
   List<CartItem> items = [];
 
   void addToCart(Product product) {
-    var existingItem = items.firstWhere((item) => item.product.id == product.id, 
-    orElse: () => CartItem(product: product));
-    if (existingItem.quantity == 0) {
-      items.add(existingItem);
-    }
+    var existingItem = items.firstWhere(
+      (item) => item.product.id == product.id,
+      orElse: () => CartItem(product: product),
+    );
+
     existingItem.quantity++;
     notifyListeners();
   }
@@ -37,8 +44,17 @@ class CartModel extends ChangeNotifier {
     }
     notifyListeners();
   }
-}
 
+  void editItem(CartItem editedItem) {
+    for (int i = 0; i < items.length; i++) {
+      if (items[i].product.id == editedItem.product.id) {
+        items[i] = editedItem;
+        notifyListeners();
+        break;
+      }
+    }
+  }
+}
 
 class CartItemWidget extends StatelessWidget {
   final CartItem cartItem;
